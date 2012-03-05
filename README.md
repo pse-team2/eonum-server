@@ -1,16 +1,23 @@
-= Health Service Locator
+# Health Service Locator
 
 This is to become a service to locate health care facilities.
 
-== Current functionality
+## Current functionality
 
 Partially implemented: import tool
 
+## compiling
 
-== installation
-start("mvn:org.codehaus.jettison/jettison/1.3")
+TBD
 
-=== Usage
+## installation
+
+before installing the two bundles compiled above you need to install
+jettison, you can do this with
+
+    start("mvn:org.codehaus.jettison/jettison/1.3")
+
+## Usage
 
 On the Clerezza console
 
@@ -20,9 +27,4 @@ On the Clerezza console
   zz>val i = $[Importer]
   zz>i.importFile(f)
 
-import ch.eonum.health.locator.server._
-import java.io._ 
-val f = new File("/home/reto/workspace/pse/aerzte_adresse_bern.csv")
-val i = $[Importer]
-i.importFile(f)
 
