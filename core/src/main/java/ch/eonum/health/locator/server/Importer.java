@@ -40,7 +40,7 @@ public class Importer {
 	
 	@Reference
 	private TcManager tcm;
-	private UriRef DATA_GRAPH_URI = new UriRef("http://ontologies.eonum.ch/health-locator-data5");
+	private UriRef DATA_GRAPH_URI = new UriRef("http://ontologies.eonum.ch/health-locator-data");
 	
 	public void importFile(File file) throws IOException {
 		final FileInputStream fileInputStream = new FileInputStream(file);
@@ -48,11 +48,11 @@ public class Importer {
 		//final FileReader fileReader = new FileReader(file);
 		final BufferedReader in = new BufferedReader(inputStreamReader);
 		final MGraph dataGraph = getDataGraph();
-		int abortCounter = 0;
+		//int abortCounter = 0;
 		for (String line = in.readLine(); line != null; line = in.readLine()) {
-			if (abortCounter++ > 10) {
+			/*if (abortCounter++ > 10) {
 				break;
-			}
+			}*/
 			final GraphNode entry = new GraphNode(new BNode(), dataGraph);
 			entry.addPropertyValue(RDFS.comment, line);
 			final String[] tokens = line.replace('|',';').split(";");
