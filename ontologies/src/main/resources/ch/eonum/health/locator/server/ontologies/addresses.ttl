@@ -1,0 +1,41 @@
+@prefix : <http://enotologies.eonum.ch/health/addresses#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix skos: <http://www.w3.org/2008/05/skos#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+
+: a owl:Ontology.
+
+:Address a rdfs:Class;
+	skos:definition "An address of interest."@en.
+
+:name a rdf:Property;
+	skos:definition "The name of professional / institution"@en;
+	rdfs:Domain :Address.
+
+:description a rdf:Property;
+	skos:definition "A description of professional / institution"@en;
+	rdfs:Domain :Address.
+
+:address a rdf:Property;
+	skos:definition "The postal address of professional / institution"@en;
+	rdfs:Domain :Address.
+
+
+:email a rdf:Property;
+	skos:definition "Email of professional / institution"@en;
+	rdfs:Domain :Address.
+
+:canton a rdf:Property;
+	skos:definition "The canton of professional / institution"@en;
+	rdfs:Domain :Address.
+
+
+:category a rdf:Property;
+	skos:definition "The category of professional / institution"@en;
+	rdfs:Domain :Address.
+
+
+:AddressList a rdfs:Class;
+	skos:definition "A List of Addresss"@en;
+	rdfs:subClassOf rdf:List.
