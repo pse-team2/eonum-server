@@ -28,3 +28,9 @@ On the Clerezza console
   zz>i.importFile(f)
 
 
+
+import ch.eonum.health.locator.server._
+import java.io._ 
+val f = new File("/home/eonum/unzipped/aerzte_adresse_bern.csv")
+val i = $[Importer]
+i.importFile(f)

@@ -9,6 +9,10 @@
 :Address a rdfs:Class;
 	skos:definition "An address of interest."@en.
 
+:AddressList a rdfs:Class;
+	skos:definition "A list of addresses."@en;
+	rdfs:subClassOf rdf:List.
+
 :name a rdf:Property;
 	skos:definition "The name of professional / institution"@en;
 	rdfs:Domain :Address.

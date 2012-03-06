@@ -6,22 +6,27 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.concurrent.locks.Lock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.clerezza.rdf.core.BNode;
 import org.apache.clerezza.rdf.core.MGraph;
+import org.apache.clerezza.rdf.core.NonLiteral;
+import org.apache.clerezza.rdf.core.Triple;
 import org.apache.clerezza.rdf.core.UriRef;
+import org.apache.clerezza.rdf.core.access.LockableMGraph;
 import org.apache.clerezza.rdf.core.access.NoSuchEntityException;
 import org.apache.clerezza.rdf.core.access.TcManager;
+import org.apache.clerezza.rdf.core.impl.TripleImpl;
+import org.apache.clerezza.rdf.ontologies.RDF;
 import org.apache.clerezza.rdf.ontologies.RDFS;
 import org.apache.clerezza.rdf.utils.GraphNode;
 import org.apache.felix.scr.annotations.Component;
@@ -64,12 +69,32 @@ public class Importer {
 			if (!tokens[3].equals("")) entry.addPropertyValue(ADDRESSES.email, tokens[3]);
 			entry.addPropertyValue(ADDRESSES.canton, tokens[4]);
 			entry.addPropertyValue(ADDRESSES.category, tokens[5]);
+			entry.addProperty(RDF.type, ADDRESSES.Address);
 			addGeoPos(entry);
 		}
 		
 	}
+	
+	public void addType() {
+		final LockableMGraph dataGraph = getDataGraph();
+		Lock l = dataGraph.getLock().writeLock();
+		l.lock();
+		try {
+			final Iterator<Triple> triples  = dataGraph.filter(null, ADDRESSES.name, null);
+			final Collection<NonLiteral> addresses = new HashSet<NonLiteral>();
+			while (triples.hasNext()) {
+				NonLiteral address = triples.next().getSubject();
+				addresses.add(address);
+			}
+			for (NonLiteral address : addresses) {
+				dataGraph.add(new TripleImpl(address, RDF.type, ADDRESSES.Address));
+			}
+		} finally {
+			l.unlock();
+		}
+	}
 
-	private MGraph getDataGraph() {
+	private LockableMGraph getDataGraph() {
 		try {
 			return tcm.getMGraph(DATA_GRAPH_URI);
 		} catch (NoSuchEntityException e) {
