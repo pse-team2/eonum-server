@@ -16,11 +16,10 @@ import org.apache.clerezza.rdf.scala.utils.Preamble._;
 		{
 			"name": """"+(address/ADDRESSES.name*)+"""",
 			"types": [ """"+(for (category <- address/ADDRESSES.category) yield category*).mkString(", ")+"""" ],
-			"geometry": {
-			  "location": {
+			"location": {
 				"lat": """+(address/WGS84_POS.lat*)+""",
 				"lng": """+((address/WGS84_POS.long_)*)+"""
-			  }
+			}
 		}"""
 	).mkString(
 	",")+""" 
