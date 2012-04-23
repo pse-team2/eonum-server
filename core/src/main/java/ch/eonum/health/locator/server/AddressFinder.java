@@ -86,7 +86,7 @@ public class AddressFinder {
 				while (triples.hasNext()) {
 					NonLiteral address = triples.next().getSubject();
 					GraphNode graphNode = new GraphNode(address, data); 
-					if (((category != null) || matchCategory(graphNode, category)) && isInRange(graphNode,
+					if (((category == null) || matchCategory(graphNode, category)) && isInRange(graphNode,
 							minLong, maxLong, minLat, maxLat)) {
 						resultList.add(address);
 						if (resultCount++ > MAX_RESULTS) {
