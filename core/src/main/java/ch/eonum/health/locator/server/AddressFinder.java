@@ -16,6 +16,7 @@ import org.apache.clerezza.rdf.core.BNode;
 import org.apache.clerezza.rdf.core.Literal;
 import org.apache.clerezza.rdf.core.MGraph;
 import org.apache.clerezza.rdf.core.NonLiteral;
+import org.apache.clerezza.rdf.core.Resource;
 import org.apache.clerezza.rdf.core.Triple;
 import org.apache.clerezza.rdf.core.TripleCollection;
 import org.apache.clerezza.rdf.core.UriRef;
@@ -65,7 +66,8 @@ public class AddressFinder {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public GraphNode entry(@QueryParam("long") final Double long_, @QueryParam("lat") final Double lat) {
+	public GraphNode entry(@QueryParam("long") final Double long_, @QueryParam("lat") final Double lat, 
+			@QueryParam("category") final String category) {
 		return AccessController.doPrivileged(new PrivilegedAction<GraphNode>() {
 
 			@Override
@@ -83,7 +85,8 @@ public class AddressFinder {
 				int resultCount = 0;
 				while (triples.hasNext()) {
 					NonLiteral address = triples.next().getSubject();
-					if (isInRange(new GraphNode(address, data),
+					GraphNode graphNode = new GraphNode(address, data); 
+					if (((category != null) || matchCategory(graphNode, category)) && isInRange(graphNode,
 							minLong, maxLong, minLat, maxLat)) {
 						resultList.add(address);
 						if (resultCount++ > MAX_RESULTS) {
@@ -93,6 +96,7 @@ public class AddressFinder {
 				}
 				return result;
 			}
+
 		});
 
 	}
@@ -114,5 +118,16 @@ public class AddressFinder {
 			logger.debug("Exception geeting location of address: " + e);
 			return false;
 		}
+	}
+	
+	private boolean matchCategory(GraphNode graphNode, String category) {
+		Iterator<Resource> categories = graphNode.getObjects(ADDRESSES.category);
+		while(categories.hasNext()) {
+			if (category.equals(((Literal)categories.next()).getLexicalForm())) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
