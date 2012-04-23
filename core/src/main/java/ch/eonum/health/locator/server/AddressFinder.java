@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
 @Property(name = "javax.ws.rs", boolValue = true)
 @Path("finder")
 public class AddressFinder {
+	
+	final static int MAX_RESULTS = 100;
 
 	private static final Logger logger = LoggerFactory.getLogger(AddressFinder.class);
 	@Reference
@@ -78,11 +80,15 @@ public class AddressFinder {
 				result.addProperty(RDF.type, ADDRESSES.AddressList);
 				final RdfList resultList = new RdfList(result);
 				final Iterator<Triple> triples = data.filter(null, RDF.type, ADDRESSES.Address);
+				int resultCount = 0;
 				while (triples.hasNext()) {
 					NonLiteral address = triples.next().getSubject();
 					if (isInRange(new GraphNode(address, data),
 							minLong, maxLong, minLat, maxLat)) {
 						resultList.add(address);
+						if (resultCount++ > MAX_RESULTS) {
+							break;
+						}
 					}
 				}
 				return result;
