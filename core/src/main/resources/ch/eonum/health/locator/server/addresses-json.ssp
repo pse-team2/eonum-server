@@ -15,6 +15,8 @@ import org.apache.clerezza.rdf.scala.utils.Preamble._;
 		"""
 		{
 			"name": """"+(address/ADDRESSES.name*)+"""",
+			"address": """"+(address/ADDRESSES.address*)+"""",
+			"email": """"+(address/ADDRESSES.email*)+"""",
 			"types": [ """"+(for (category <- address/ADDRESSES.category) yield category*).mkString(", ")+"""" ],
 			"location": {
 				"lat": """+(address/WGS84_POS.lat*)+""",
