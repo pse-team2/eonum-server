@@ -5,6 +5,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Iterator;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -50,7 +51,7 @@ import ch.eonum.health.locator.server.ontologies.WGS84_POS;
 @Path("finder")
 public class AddressFinder {
 	
-	final static int MAX_RESULTS = 100;
+	//final static int MAX_RESULTS = 100;
 
 	private static final Logger logger = LoggerFactory.getLogger(AddressFinder.class);
 	@Reference
@@ -73,7 +74,7 @@ public class AddressFinder {
 	@Produces(MediaType.APPLICATION_JSON)
 	public GraphNode entry(@QueryParam("long1") final Double long1, @QueryParam("lat1") final Double lat1,
 			@QueryParam("long2") final Double long2, @QueryParam("lat2") final Double lat2,
-			@QueryParam("category") final String category) {
+			@QueryParam("category") final String category, @QueryParam("count") @DefaultValue("20") final int count) {
 		if ((lat1 == null) || (lat2 == null) || (long1 == null) || (long2 == null)) {
 			throw new WebApplicationException(Response.status(400).entity(
 					"lat1, lat2, long1 and long2 are required query arguments").build());
@@ -99,7 +100,7 @@ public class AddressFinder {
 					if (((category == null) || matchCategory(graphNode, category)) && isInRange(graphNode,
 							minLong, maxLong, minLat, maxLat)) {
 						resultList.add(address);
-						if (resultCount++ > MAX_RESULTS) {
+						if (resultList.size() >= count) {
 							break;
 						}
 					}
