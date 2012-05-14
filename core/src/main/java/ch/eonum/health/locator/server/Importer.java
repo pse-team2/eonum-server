@@ -12,8 +12,11 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,7 +75,37 @@ public class Importer {
 			entry.addProperty(RDF.type, ADDRESSES.Address);
 			addGeoPos(entry);
 		}
-		
+	}
+	
+	/**
+	 * Considering name and address as combined inverse functional property
+	 */
+	public void smush() {
+		final Map<String, Set<GraphNode>> equalityMap = new HashMap<String, Set<GraphNode>>();
+		final LockableMGraph dataGraph = getDataGraph();
+		Lock l = dataGraph.getLock().writeLock();
+		l.lock();
+		try {
+			final Iterator<Triple> triples  = dataGraph.filter(null, RDF.type, ADDRESSES.Address);
+			while (triples.hasNext()) {
+				final GraphNode gn = new GraphNode(triples.next().getSubject(), dataGraph);
+				final String name = gn.getLiterals(ADDRESSES.name).next().getLexicalForm();
+				final String address = gn.getLiterals(ADDRESSES.address).next().getLexicalForm();
+				final String key = name+address;
+				final Set<GraphNode> set = equalityMap.containsKey(key)? equalityMap.get(key) : new HashSet<GraphNode>();
+				set.add(gn);
+				equalityMap.put(key, set);
+			}
+		} finally {
+			l.unlock();
+		}
+		for (Set<GraphNode> equalitySet : equalityMap.values()) {
+			final Iterator<GraphNode> iter = equalitySet.iterator();
+			final GraphNode first = iter.next();
+			while(iter.hasNext()) {
+				iter.next().replaceWith((NonLiteral)first.getNode());
+			}
+		}
 	}
 	
 	public void addType() {
