@@ -1,25 +1,37 @@
-# Health Service Locator
+# Eonum Server installation and usage instruction
 
-This is to become a service to locate health care facilities.
+Instrustions on how to compile and use the eonum server.
 
-## Current functionality
+## Getting the sources and compiling
 
-Partially implemented: import tool
+To get the sources and compile you need to have git and maven installed.
 
-## compiling
+    git://github.com/pse-team2/eonum-server.git
+    cd eonum-server
+    mvn install
 
-TBD
+This will generated two OSGi bundles to install in Apache Clerezza.
+
+The two jars are located in ontologies/target and core/target.
+
+## Install and Start Apache Clerezza
+
+Get and start Clerezza following the instructions at <http://incubator.apache.org/clerezza/getting-started/>
 
 ## installation
 
 before installing the two bundles compiled above you need to install
-jettison, you can do this with
+jettison, you can do this on the clerezza console with with
 
-    start("mvn:org.codehaus.jettison/jettison/1.3")
+    zz>start("mvn:org.codehaus.jettison/jettison/1.3")
+
+You can install and start the two eonun bundles the same way (using file:///-URLs) or accessing the webconsole over http://localhost:8080/system/console/services.
 
 ## Usage
 
-On the Clerezza console
+### Importing data
+
+On the Clerezza console:
 
   zz>import ch.eonum.health.locator.server._
   zz>import java.io._ 
@@ -28,9 +40,9 @@ On the Clerezza console
   zz>i.importFile(f)
 
 
+### Adding missing location
 
-import ch.eonum.health.locator.server._
-import java.io._ 
-val f = new File("/home/eonum/unzipped/aerzte_adresse_bern.csv")
-val i = $[Importer]
-i.importFile(f)
+This can be accessed via web at 
+http://localhost:8080/eonum/manager
+
+Note that this will abort on 3 consequtive "over query limit" exceptions.
