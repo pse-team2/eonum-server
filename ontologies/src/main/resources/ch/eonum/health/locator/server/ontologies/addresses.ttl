@@ -25,6 +25,14 @@
 	skos:definition "The postal address of professional / institution"@en;
 	rdfs:Domain :Address.
 
+:tel a rdf:Property;
+	skos:definition "Phone number of professional / institution"@en;
+	rdfs:Domain :Address.
+
+:fax a rdf:Property;
+	skos:definition "Fax-Number of professional / institution"@en;
+	rdfs:Domain :Address.
+
 
 :email a rdf:Property;
 	skos:definition "Email of professional / institution"@en;

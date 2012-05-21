@@ -4,3 +4,5 @@
 target
 *~
 workspace
+.externalToolBuilders
+maven-eclipse.xml

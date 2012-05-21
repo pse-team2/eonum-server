@@ -14,14 +14,17 @@ import org.apache.clerezza.rdf.scala.utils.Preamble._;
   yield 
 		"""
 		{
-			"name": """"+(address/ADDRESSES.name*)+"""",
+			"name" : """"+(address/ADDRESSES.name*)+"""",
 			"address": """"+(address/ADDRESSES.address*)+"""",
 			"email": """"+(address/ADDRESSES.email*)+"""",
 			"types": [ """"+(for (category <- address/ADDRESSES.category) yield category*).mkString(", ")+"""" ],
 			"location": {
 				"lat": """+(address/WGS84_POS.lat*)+""",
 				"lng": """+((address/WGS84_POS.long_)*)+"""
-			}
+			}"""+
+			(if ((address/ADDRESSES.tel).length > 0) {
+			(",\n\"tel\": \"" + (address/ADDRESSES.tel*)) + "\""} else {""}) + (if ((address/ADDRESSES.fax).length > 0) {
+			",\n\"fax\": \""+(address/ADDRESSES.fax*) +"\""} else {""}) + """ 
 		}"""
 	).mkString(
 	",")+""" 
