@@ -131,6 +131,45 @@ public class Importer {
 		}
 	}
 	
+	public void importFile2(File file) throws IOException {
+		final FileInputStream fileInputStream = new FileInputStream(file);
+		final InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "utf-8");
+		//final FileReader fileReader = new FileReader(file);
+		final BufferedReader in = new BufferedReader(inputStreamReader);
+		final MGraph dataGraph = getDataGraph();
+		//int abortCounter = 0;
+		boolean overQueryLimit = false;
+		for (String line = in.readLine(); line != null; line = in.readLine()) {
+			/*if (abortCounter++ > 10) {
+				break;
+			}*/
+			final GraphNode entry = new GraphNode(new BNode(), dataGraph);
+			entry.addPropertyValue(RDFS.comment, line);
+			final String[] tokens = line.split(",");
+			/* Wey Andreas|Dr. med. Facharzt FMH für Allgemeinmedizin|
+			 * Bürenstrasse 2, 3296 Arch|awey@bluewin.ch|be|allgemeinaerzte */
+			entry.addPropertyValue(ADDRESSES.name, tokens[0]);
+			entry.addPropertyValue(ADDRESSES.description, tokens[1]);
+			entry.addPropertyValue(ADDRESSES.address, tokens[2]+", "+tokens[3]+" "+tokens[4]);
+			/*if (!tokens[3].equals("")) entry.addPropertyValue(ADDRESSES.email, tokens[3]);
+			entry.addPropertyValue(ADDRESSES.tel, tokens[4]);
+			entry.addPropertyValue(ADDRESSES.fax, tokens[5]);*/
+			entry.addPropertyValue(ADDRESSES.canton, tokens[6]);
+			entry.addPropertyValue(ADDRESSES.category, "Spitäler");
+			entry.addProperty(RDF.type, ADDRESSES.Address);
+			if (!overQueryLimit) {
+				try {
+					addGeoPos(entry);
+					Thread.sleep(1000);
+				} catch (OverQueryLimitException e) {
+					overQueryLimit = true;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Considering name and address as combined inverse functional property
 	 */
@@ -203,7 +242,7 @@ public class Importer {
 			String status = (String) jsonObject.get("status");
 			//System.out.println(status);
 			if (status.equals("OVER_QUERY_LIMIT")) {
-				throw new RuntimeException("over query limit");
+				throw new OverQueryLimitException("over query limit");
 			}
 			if (status.equals("OK")) {
 				final JSONObject location = jsonObject.getJSONArray("results")
