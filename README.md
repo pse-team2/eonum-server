@@ -33,11 +33,11 @@ You can install and start the two eonun bundles the same way (using file:///-URL
 
 On the Clerezza console:
 
-  zz>import ch.eonum.health.locator.server._
-  zz>import java.io._ 
-  zz>val f = new File("/path/to/adderesses.csv")
-  zz>val i = $[Importer]
-  zz>i.importFile(f)
+    zz>import ch.eonum.health.locator.server._
+    zz>import java.io._ 
+    zz>val f = new File("/path/to/adderesses.csv")
+    zz>val i = $[Importer]
+    zz>i.importFile(f)
 
 
 ### Adding missing location
